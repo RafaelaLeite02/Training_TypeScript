@@ -24,8 +24,8 @@ enum TipoTransacao { // criando um enum
     PAGAMENTO_BOLET = "Pagamento de Boleto"
 } 
 
-const novaTransacao: Transacao = {
-    tipoTransacao: TipoTransacao.DEPOSITO,
+const novaTransacao: Transaca = {
+    tipoTransacao: TipoTransacao.DEPOSIT,
     data: new Date(),
     valor: 0
 }

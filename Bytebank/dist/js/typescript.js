@@ -16,7 +16,7 @@ var TipoTransacao;
     TipoTransacao["PAGAMENTO_BOLET"] = "Pagamento de Boleto";
 })(TipoTransacao || (TipoTransacao = {}));
 const novaTransacao = {
-    tipoTransacao: TipoTransacao.DEPOSITO,
+    tipoTransacao: TipoTransacao.DEPOSIT,
     data: new Date(),
     valor: 0
 };
