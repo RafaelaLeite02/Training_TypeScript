@@ -8,7 +8,7 @@ const elementoDataAcesso = document.querySelector(".block-saldo time")  as HTMLE
 
 if(elementoDataAcesso != null){
     const dataAtual: Date = new Date();
-    elementoDataAcesso.textContent = formatarData(Conta.setDataAcesso(), FormatoData.DIA_SEMANA_DIA_MES_ANO);
+    elementoDataAcesso.textContent = formatarData(Conta.getDataAcesso(), FormatoData.DIA_SEMANA_DIA_MES_ANO);
 }
 
 renderizarSaldo(); //chamar a função para atualizar o saldo na tela

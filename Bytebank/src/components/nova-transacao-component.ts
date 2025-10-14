@@ -2,6 +2,7 @@
 import { TipoTransacao } from "../types/tipoTransacao.js";
 import { Transacao } from "../types/Transacao.js";
 import SaldoComponent from "./saldo-component.js";
+import ExtratoComponent from "./extrato-component.js";
 import Conta from "../types/Conta.js";
 
 const elementoForm = document.querySelector(".block-nova-transacao form") as HTMLFormElement;
@@ -20,7 +21,7 @@ try{
 
     let tipoTransacao: TipoTransacao = inputTipoTransacao.value as TipoTransacao; // salvar o valor do html no js
     let valor: number = inputValor.valueAsNumber; //valueAsNumber é para pegar o valor como número
-    let data: Date = new Date(inputData.value); //new Date() é para converter a string em um objeto Date
+    let data: Date = new Date(inputData.value + "00:00:00"); //new Date() é para converter a string em um objeto Date
 
     const novaTransacao: Transacao = {  //criação de um objeto literal para salvar os dados da transação
         tipoTransacao: tipoTransacao,
@@ -30,6 +31,7 @@ try{
 
     Conta.registrarTrancacao(novaTransacao); //chamar a função para registrar a transação
     SaldoComponent.atualizar(); //atualizar o saldo na tela
+    ExtratoComponent.atualizar(); //atualizar o extrato na tela
     elementoForm.reset(); //reset() é para limpar o formulário após o envio.
 }
 catch(error){
