@@ -21,7 +21,8 @@ type Transaca = { // criando um tipo personalizado, Não adicionar mais campos o
 enum TipoTransacao { // criando um enum
     DEPOSIT = "Depósito",
     TRANSFERENCI = "Transferência",
-    PAGAMENTO_BOLET = "Pagamento de Boleto"
+    PAGAMENTO_BOLET = "Pagamento de Boleto",
+    TRANSFERENCIA = "TRANSFERENCIA"
 } 
 
 const novaTransacao: Transaca = {

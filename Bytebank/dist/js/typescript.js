@@ -14,6 +14,7 @@ var TipoTransacao;
     TipoTransacao["DEPOSIT"] = "Dep\u00F3sito";
     TipoTransacao["TRANSFERENCI"] = "Transfer\u00EAncia";
     TipoTransacao["PAGAMENTO_BOLET"] = "Pagamento de Boleto";
+    TipoTransacao["TRANSFERENCIA"] = "TRANSFERENCIA";
 })(TipoTransacao || (TipoTransacao = {}));
 const novaTransacao = {
     tipoTransacao: TipoTransacao.DEPOSIT,

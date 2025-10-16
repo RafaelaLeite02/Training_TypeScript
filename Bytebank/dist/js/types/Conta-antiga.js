@@ -1,23 +1,38 @@
 import { TipoTransacao } from "./tipoTransacao.js";
-import { Armazenador } from "./Armazenador.js";
-export class Conta {
-    nome;
-    saldo = Armazenador.obter("saldo") || 0;
-    transacoes = Armazenador.obter(("transacoes"), (key, value) => {
-        if (key === "data") {
-            return new Date(value);
-        }
-        return value;
-    }) || []; //se não tiver transações no localStorage, o array será vazio
-    constructor(nome) {
-        this.nome = nome;
+let saldo = JSON.parse(localStorage.getItem("saldo")) || 0; //pegar o saldo do localStorage ou iniciar com 0
+const transacoes = JSON.parse(localStorage.getItem("transacoes"), (key, value) => {
+    if (key === "data") { //converter a string de volta para Date
+        return new Date(value);
     }
-    getTitular() {
-        return this.nome;
+    return value;
+}) || []; //salvar temporariamnete no localStorage
+function debitar(valor) {
+    if (valor <= 0) {
+        throw new Error("Valor inválido para débitado deve ser maior que zero");
     }
+    if (valor > saldo) {
+        throw new Error("Saldo insuficiente para débito");
+    }
+    saldo -= valor;
+    localStorage.setItem("saldo", saldo.toString());
+}
+function depositar(valor) {
+    if (valor <= 0) {
+        throw new Error("Valor inválido para depósito deve ser maior que zero");
+    }
+    saldo += valor;
+    localStorage.setItem("saldo", saldo.toString());
+}
+const Conta = {
+    getSaldo() {
+        return saldo;
+    },
+    getDataAcesso() {
+        return new Date();
+    },
     getGruposTransacoes() {
         const gruposTransacoes = [];
-        const listaTransacoes = structuredClone(this.transacoes); //structuredClone() é para criar uma cópia profunda do array
+        const listaTransacoes = structuredClone(transacoes); //structuredClone() é para criar uma cópia profunda do array
         const transacoesOrdenadas = listaTransacoes.sort((t1, t2) => t2.data.getTime() - t1.data.getTime()); //ordenar as transações por data || sort é para ordenar o array
         let labelAtualGrupoTransacao = ""; //variável para armazenar o label do grupo atual
         for (let transacao of transacoesOrdenadas) { //percorrer o array de transações
@@ -32,45 +47,21 @@ export class Conta {
             gruposTransacoes.at(-1).transacoes.push(transacao); //adicionar a transação ao grupo atual, .at retorna o ultimpo elemento do array
         }
         return gruposTransacoes;
-    }
-    getSaldo() {
-        return this.saldo;
-    }
-    getDataAcesso() {
-        return new Date();
-    }
+    },
     registrarTrancacao(novaTransacao) {
         if (novaTransacao.tipoTransacao == TipoTransacao.DEPOSITO) { //condição para saber se é depósito ou transferência
-            this.depositar(novaTransacao.valor);
+            depositar(novaTransacao.valor);
         }
         else if (novaTransacao.tipoTransacao == TipoTransacao.TRANSFERENCIA || novaTransacao.tipoTransacao == TipoTransacao.PAGAMENTO_BOLETO) {
-            this.debitar(novaTransacao.valor);
+            debitar(novaTransacao.valor);
             novaTransacao.valor *= -1; //transformar o valor em negativo para exibir no extrato
         }
         else {
             throw new Error("Tipo de transação inválida");
         }
-        this.transacoes.push(novaTransacao); //adicionar a nova transação ao array
+        transacoes.push(novaTransacao); //adicionar a nova transação ao array
         console.log(this.getGruposTransacoes());
-        Armazenador.salvar("transacoes", JSON.stringify(this.transacoes)); //salvar no localStorage
+        localStorage.setItem("transacoes", JSON.stringify(transacoes)); //salvar no localStorage
     }
-    debitar(valor) {
-        if (valor <= 0) {
-            throw new Error("Valor inválido para débitado deve ser maior que zero");
-        }
-        if (valor > this.saldo) {
-            throw new Error("Saldo insuficiente para débito");
-        }
-        this.saldo -= valor;
-        Armazenador.salvar("saldo", this.saldo.toString());
-    }
-    depositar(valor) {
-        if (valor <= 0) {
-            throw new Error("Valor inválido para depósito deve ser maior que zero");
-        }
-        this.saldo += valor;
-        Armazenador.salvar("saldo", this.saldo.toString());
-    }
-}
-const conta = new Conta("Joana da Silva Oliveira"); //instância da classe Conta 
-export default conta;
+};
+export default Conta;
