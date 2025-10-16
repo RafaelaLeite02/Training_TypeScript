@@ -21,7 +21,20 @@ try{
 
     let tipoTransacao: TipoTransacao = inputTipoTransacao.value as TipoTransacao; // salvar o valor do html no js
     let valor: number = inputValor.valueAsNumber; //valueAsNumber é para pegar o valor como número
-    let data: Date = new Date(inputData.value + "00:00:00"); //new Date() é para converter a string em um objeto Date
+
+    let data: Date;
+    if (inputData.value) {
+        const partes = inputData.value.split("-").map(v => Number(v)); 
+        // split("-") é para separar a string em partes usando o hífen como separador.
+        // map(v => Number(v)) é para converter cada parte em número.
+        // Lembrando que o mês em JavaScript é baseado em zero (0-11), então precisamos subtrair 1 do valor do mês.
+        const ano = partes[0];
+        const mes = partes[1] - 1; // monthIndex (0-11)
+        const dia = partes[2];
+        data = new Date(ano, mes, dia);
+    } else {
+        data = new Date();
+    }
 
     const novaTransacao: Transacao = {  //criação de um objeto literal para salvar os dados da transação
         tipoTransacao: tipoTransacao,
