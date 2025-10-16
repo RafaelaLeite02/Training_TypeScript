@@ -1,5 +1,12 @@
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 import { TipoTransacao } from "./tipoTransacao.js";
 import { Armazenador } from "./Armazenador.js";
+import { ValidaDebito } from "./Decorators.js";
 export class Conta {
     nome;
     saldo = Armazenador.obter("saldo") || 0;
@@ -39,7 +46,7 @@ export class Conta {
     getDataAcesso() {
         return new Date();
     }
-    registrarTrancacao(novaTransacao) {
+    registrarTransacao(novaTransacao) {
         if (novaTransacao.tipoTransacao == TipoTransacao.DEPOSITO) { //condição para saber se é depósito ou transferência
             this.depositar(novaTransacao.valor);
         }
@@ -55,12 +62,6 @@ export class Conta {
         Armazenador.salvar("transacoes", JSON.stringify(this.transacoes)); //salvar no localStorage
     }
     debitar(valor) {
-        if (valor <= 0) {
-            throw new Error("Valor inválido para débitado deve ser maior que zero");
-        }
-        if (valor > this.saldo) {
-            throw new Error("Saldo insuficiente para débito");
-        }
         this.saldo -= valor;
         Armazenador.salvar("saldo", this.saldo.toString());
     }
@@ -72,5 +73,19 @@ export class Conta {
         Armazenador.salvar("saldo", this.saldo.toString());
     }
 }
+__decorate([
+    ValidaDebito
+], Conta.prototype, "debitar", null);
+export class ContaPremium extends Conta {
+    //extends é para herdar os atributos e métodos da classe Conta e para restringir generics
+    registrarTransacao(transacao) {
+        if (transacao.tipoTransacao === TipoTransacao.DEPOSITO) {
+            console.log("Ganhou um bonus de 0.50 centavos");
+            transacao.valor += 0.50;
+        }
+        super.registrarTransacao(transacao); //super é para chamar o método da classe pai (Conta)
+    }
+}
 const conta = new Conta("Joana da Silva Oliveira"); //instância da classe Conta 
+const contaPremium = new ContaPremium("Rafaela Leite");
 export default conta;

@@ -3,7 +3,8 @@
         "target": "es2023", // versão do javascript
         "outDir": "./dist/js/", // diretório de saída
         "noEmitOnError": true, // não emitir arquivos js se houver erros
-        "rootDir": "./src" // diretório raiz
+        "rootDir": "./src", // diretório raiz
+        "experimentalDecorators": true // habilitar decoradores experimentais
     },
     "include": [
         "./src/**/*" // incluir todos os arquivos dentro da pasta src

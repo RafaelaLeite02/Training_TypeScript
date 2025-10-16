@@ -1,12 +1,13 @@
 import { Transacao } from "./Transacao.js";
 import { GrupoTransacao } from "./GrupoTransacao.js";
 import { TipoTransacao } from "./tipoTransacao.js";
-import {Armazenador} from "./Armazenador.js";
+import { Armazenador } from "./Armazenador.js";
+import { ValidaDebito } from "./Decorators.js";
 
 export class Conta {
     protected nome: string;
-    protected saldo: number = Armazenador.obter("saldo") || 0;
-    private transacoes: Transacao[] = Armazenador.obter(("transacoes"), (key: string, value: any) => { //função para converter a string de volta para o tipo Date
+    protected saldo: number = Armazenador.obter<number>("saldo") || 0;
+    private transacoes: Transacao[] = Armazenador.obter<Transacao[]>(("transacoes"), (key: string, value: any) => { //função para converter a string de volta para o tipo Date
         if (key === "data") {
             return new Date(value);
         }
@@ -17,7 +18,7 @@ export class Conta {
         this.nome = nome;
     }
 
-    public getTitular(){
+    public getTitular() {
         return this.nome;
     }
 
@@ -52,7 +53,7 @@ export class Conta {
         return new Date();
     }
 
-    registrarTrancacao(novaTransacao: Transacao): void {  //função para registrar a transação
+    registrarTransacao(novaTransacao: Transacao): void {  //função para registrar a transação
 
         if (novaTransacao.tipoTransacao == TipoTransacao.DEPOSITO) { //condição para saber se é depósito ou transferência
             this.depositar(novaTransacao.valor);
@@ -68,13 +69,8 @@ export class Conta {
         Armazenador.salvar("transacoes", JSON.stringify(this.transacoes)); //salvar no localStorage
     }
 
+    @ValidaDebito
     debitar(valor: number): void { //função para debitar o valor do saldo e tratar erros
-        if (valor <= 0) {
-            throw new Error("Valor inválido para débitado deve ser maior que zero");
-        }
-        if (valor > this.saldo) {
-            throw new Error("Saldo insuficiente para débito");
-        }
         this.saldo -= valor;
         Armazenador.salvar("saldo", this.saldo.toString());
     }
@@ -87,11 +83,22 @@ export class Conta {
         Armazenador.salvar("saldo", this.saldo.toString());
     }
 
+}
 
+export class ContaPremium extends Conta{
+    //extends é para herdar os atributos e métodos da classe Conta e para restringir generics
 
+    registrarTransacao(transacao: Transacao): void{
+        if(transacao.tipoTransacao === TipoTransacao.DEPOSITO){
+            console.log("Ganhou um bonus de 0.50 centavos");
+            transacao.valor += 0.50;
+        }
 
+        super.registrarTransacao(transacao); //super é para chamar o método da classe pai (Conta)
+    }
 }
 
 const conta = new Conta("Joana da Silva Oliveira"); //instância da classe Conta 
+const contaPremium = new ContaPremium("Rafaela Leite");
 
 export default conta;

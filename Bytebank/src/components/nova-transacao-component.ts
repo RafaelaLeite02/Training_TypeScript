@@ -42,7 +42,7 @@ try{
         data: data
     }
 
-    Conta.registrarTrancacao(novaTransacao); //chamar a função para registrar a transação
+    Conta.registrarTransacao(novaTransacao); //chamar a função para registrar a transação
     SaldoComponent.atualizar(); //atualizar o saldo na tela
     ExtratoComponent.atualizar(); //atualizar o extrato na tela
     elementoForm.reset(); //reset() é para limpar o formulário após o envio.
