@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { TipoTransacao } from "./tipoTransacao.js";
 import { Armazenador } from "./Armazenador.js";
-import { ValidaDebito } from "./Decorators.js";
+import { ValidaDeposito } from "./Decorators.js";
 export class Conta {
     nome;
     saldo = Armazenador.obter("saldo") || 0;
@@ -66,16 +66,16 @@ export class Conta {
         Armazenador.salvar("saldo", this.saldo.toString());
     }
     depositar(valor) {
-        if (valor <= 0) {
-            throw new Error("Valor inválido para depósito deve ser maior que zero");
-        }
         this.saldo += valor;
         Armazenador.salvar("saldo", this.saldo.toString());
     }
 }
 __decorate([
-    ValidaDebito
+    ValidaDeposito
 ], Conta.prototype, "debitar", null);
+__decorate([
+    ValidaDeposito
+], Conta.prototype, "depositar", null);
 export class ContaPremium extends Conta {
     //extends é para herdar os atributos e métodos da classe Conta e para restringir generics
     registrarTransacao(transacao) {

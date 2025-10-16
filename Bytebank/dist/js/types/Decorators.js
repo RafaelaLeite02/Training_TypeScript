@@ -13,3 +13,13 @@ export function ValidaDebito(target, propertyKey, descriptor) {
     };
     return descriptor;
 }
+export function ValidaDeposito(target, propertyKey, descriptor) {
+    const originalMethod = descriptor.value; //pegar o método original
+    descriptor.value = function (valorDoDeposito) {
+        if (valorDoDeposito <= 0) {
+            throw new Error("Valor inválido para depósito deve ser maior que zero");
+        }
+        return originalMethod.apply(this, [valorDoDeposito]); //chamar o método original
+    };
+    return descriptor;
+}

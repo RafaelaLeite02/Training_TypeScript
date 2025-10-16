@@ -2,7 +2,7 @@ import { Transacao } from "./Transacao.js";
 import { GrupoTransacao } from "./GrupoTransacao.js";
 import { TipoTransacao } from "./tipoTransacao.js";
 import { Armazenador } from "./Armazenador.js";
-import { ValidaDebito } from "./Decorators.js";
+import { ValidaDebito, ValidaDeposito } from "./Decorators.js";
 
 export class Conta {
     protected nome: string;
@@ -69,16 +69,14 @@ export class Conta {
         Armazenador.salvar("transacoes", JSON.stringify(this.transacoes)); //salvar no localStorage
     }
 
-    @ValidaDebito
+    @ValidaDeposito
     debitar(valor: number): void { //função para debitar o valor do saldo e tratar erros
         this.saldo -= valor;
         Armazenador.salvar("saldo", this.saldo.toString());
     }
 
+    @ValidaDeposito
     depositar(valor: number): void {
-        if (valor <= 0) {
-            throw new Error("Valor inválido para depósito deve ser maior que zero");
-        }
         this.saldo += valor;
         Armazenador.salvar("saldo", this.saldo.toString());
     }
